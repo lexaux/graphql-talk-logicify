@@ -5,7 +5,7 @@ const path = require('path');
 const express = require('express');
 const graphqlHTTP = require('express-graphql');
 const {makeExecutableSchema} = require('graphql-tools');
-
+const DataLoader = require('dataloader');
 const bl = require('./businessLogic');
 
 const schemaFile = path.join(__dirname, 'schema.graphql');
@@ -17,8 +17,12 @@ const schema = makeExecutableSchema({typeDefs, resolvers});
 
 let sqlitedb = null;
 
-const app = express();
+const dataloaders = () => ({
+    userById: new DataLoader((ids) => (bl.getUsersByIds(ids, sqlitedb))),
+});
 
+
+const app = express();
 app.use('/graphql', graphqlHTTP(req => {
     const startTime = Date.now();
     sqlitedb.myRequestCount = 0;
@@ -26,7 +30,8 @@ app.use('/graphql', graphqlHTTP(req => {
         schema: schema,
         graphiql: true,
         context: {
-            sqlitedb: sqlitedb
+            sqlitedb: sqlitedb,
+            dataloaders: dataloaders()
         },
         extensions: ({document, variables, operationName, result}) => {
             const timing = Date.now() - startTime;

@@ -23,7 +23,12 @@ const bl =
 
         getCurrentUser: (db) => (db.get("select * from TweeterUser limit 1")),
 
-        getUserById: (id, db) => (db.get("select * from TweeterUser where id = ?", id)),
+        getUsersByIds: (ids, db) => {
+            //TODO https://github.com/mapbox/node-sqlite3/issues/762 can not substitute parameters
+            const params = ids.map(()=>'?').join(',');
+            return db
+                .all(`select * from TweeterUser where id in (${params})`, ids)
+        },
 
         getTweetSubscribers: (tweetId, limit, db) => (db.all(
             `select 
@@ -47,7 +52,6 @@ const bl =
         },
 
         markTweetRead: (tweetId, userId, db) => (db.run('insert into UserReadTweet(userId, tweetId) values (?, ?)', userId, tweetId)),
-
     };
 
 module.exports = bl;

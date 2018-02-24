@@ -31,7 +31,7 @@ const resolvers = {
     },
 
     Tweet: {
-        Author: (tweet, params, {sqlitedb}) => bl.getUserById(tweet.author_id, sqlitedb),
+        Author: (tweet, params, {dataloaders}) => dataloaders.userById.load(tweet.author_id),
         Subscribers: (tweet, {countFirst}, {sqlitedb}) => bl.getTweetSubscribers(tweet.id, Math.min(countFirst || MAX_COUNT), sqlitedb)
     },
 
