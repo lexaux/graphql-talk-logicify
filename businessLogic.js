@@ -1,45 +1,53 @@
 const repository = require('./repository');
+const sqlite = require('sqlite');
 const q = require('q');
 
-module.exports = {
-    getAllTweets: () => {
-        const deferred = q.defer();
-        setTimeout(() => {
-            deferred.resolve(repository.tweets);
-        }, 250);
-        return deferred.promise;
-    },
-    getTweetById: (id) => (
-        repository.tweets.find(
-            tweet => tweet.id == id
-        )
-    ),
-    addTweet: (body, author) => {
-        const nextTweetId = repository.tweets.reduce((id, tweet) => {
-            return Math.max(id, tweet.id);
-        }, -1) + 1;
-        const newTweet = {
-            id: nextTweetId,
-            date: new Date(),
-            author_id: author,
-            body,
-        };
-        repository.tweets.push(newTweet);
-        return newTweet;
-    },
-    getAuthorById: (id) => {
-        return repository.authors.find(author => author.id == id)
-    },
-    getTweetStats: (tweetId) => {
-        return repository.stats.find(stat => stat.tweet_id == tweetId)
-    },
-    getTweetSubscribers: (subscriberList, count) => {
-        if (!subscriberList) {
-            return []
-        }
-        // could run join query here, we have all the 'in' IDs
-        return subscriberList.map(id => (repository.authors.find(author => author.id == id))).slice(0, count);
-    }
-}
+const DBNAME = './db.sqlite';
 
 
+const bl =
+    {
+        initDB: () => {
+            return sqlite.open(DBNAME).then(
+                (db) => {
+                    db.migrate({force: 'last'}).catch((err) => {
+                        console.log(err)
+                    });
+                    return db;
+                })
+        },
+
+        getAllTweets: (db) => (db.all("select * from Tweet order by ID limit 10")),
+
+        getTweetById: (id, db) => (db.get("select * from Tweet where id = ?", [id])),
+
+        getCurrentUser: (db) => (db.get("select * from TweeterUser limit 1")),
+
+        getUserById: (id, db) => (db.get("select * from TweeterUser where id = ?", id)),
+
+        getTweetSubscribers: (tweetId, limit, db) => (db.all(
+            `select 
+                user.* 
+            from 
+                Tweet tw 
+                join UserReadTweet urt on tw.id = urt.tweetId
+                join TweeterUser user on urt.userId = user.id 
+            where
+                tw.id = ? 
+            limit ?`, tweetId, limit)),
+
+        addMyTweet: (body, db) => {
+            return bl.getCurrentUser(db)
+                .then((user) => {
+                    return db.run('insert into Tweet(body, date, author_id) values(?, ?, ?)', body, new Date(), user.id)
+                })
+                .then((obj) => {
+                    return bl.getTweetById(obj.lastID, db);
+                });
+        },
+
+        markTweetRead: (tweetId, userId, db) => (db.run('insert into UserReadTweet(userId, tweetId) values (?, ?)', userId, tweetId)),
+
+    };
+
+module.exports = bl;
