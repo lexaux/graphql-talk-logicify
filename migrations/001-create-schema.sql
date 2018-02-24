@@ -28,7 +28,8 @@ insert into TweeterUser (id, username, city, first_name, last_name) values
 insert into Tweet (id, body, date, author_id) values
     (1, 'Hey Im good here look at me',  strftime ("%s", "now") *1000, 1),
     (2, 'Nothing to be afraid. Just cats on the ceiling.',  strftime ("%s", "now") *1000, 2),
-    (3, 'Bad way to start your Monday.',  strftime ("%s", "now") *1000, 2);
+    (3, 'Bad way to start your Monday.',  strftime ("%s", "now") *1000, 2),
+    (4, 'React is awesome!',  strftime ("%s", "now") *1000, 3);
 
 insert into UserReadTweet(id, tweetId, userId) values
     (1, 1, 1),

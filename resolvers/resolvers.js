@@ -1,4 +1,5 @@
 const bl = require('../businessLogic');
+const weather = require('../weatherProvider');
 const validUrl = require('valid-url');
 const {GraphQLScalarType} = require("graphql");
 
@@ -31,13 +32,13 @@ const resolvers = {
 
     Tweet: {
         Author: (tweet, params, {sqlitedb}) => bl.getUserById(tweet.author_id, sqlitedb),
-        Stats: (tweet) => bl.getTweetStats(tweet.id),
         Subscribers: (tweet, {countFirst}, {sqlitedb}) => bl.getTweetSubscribers(tweet.id, Math.min(countFirst || MAX_COUNT), sqlitedb)
     },
 
     User: {
         full_name: (user) => `${user.first_name} ${user.last_name}`,
         avatar_url: (user) => `https://www.gravatar.com/avatar/${user.username}.jpg?d=monsterid`,
+        weather: (user, params, context) => weather.getWeatherForCity(user.city)
     },
 
     Date: new GraphQLScalarType({

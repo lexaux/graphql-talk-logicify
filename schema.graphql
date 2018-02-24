@@ -16,6 +16,7 @@ type User {
     last_name: String
     full_name: String
     city: String
+    weather: String
     name: String @deprecated
     avatar_url: Url
 }
