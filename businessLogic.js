@@ -1,7 +1,14 @@
-const repository = require('./repository')
+const repository = require('./repository');
+const q = require('q');
 
 module.exports = {
-    getAllTweets: () => (repository.tweets),
+    getAllTweets: () => {
+        const deferred = q.defer();
+        setTimeout(() => {
+            deferred.resolve(repository.tweets);
+        }, 250);
+        return deferred.promise;
+    },
     getTweetById: (id) => (
         repository.tweets.find(
             tweet => tweet.id == id

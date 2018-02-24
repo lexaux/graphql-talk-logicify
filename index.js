@@ -8,20 +8,26 @@ const {makeExecutableSchema} = require('graphql-tools');
 
 const resolvers = require('./resolvers/resolvers');
 
-
-const bl = require('./businessLogic')
-
 const schemaFile = path.join(__dirname, 'schema.graphql');
 const typeDefs = fs.readFileSync(schemaFile, 'utf8');
 
-
 const schema = makeExecutableSchema({typeDefs, resolvers});
 
-
 const app = express();
-app.use('/graphql', graphqlHTTP({
-    schema: schema,
-    graphiql: true,
+
+app.use('/graphql', graphqlHTTP(req => {
+    const startTime = Date.now();
+    return {
+        schema: schema,
+        graphiql: true,
+        extensions: ({document, variables, operationName, result}) => {
+            const timing = Date.now() - startTime;
+            console.log(`Hello, timing is ${timing}`);
+            return {
+                timing: timing
+            }
+        }
+    }
 }));
 
 app.listen(4000);
