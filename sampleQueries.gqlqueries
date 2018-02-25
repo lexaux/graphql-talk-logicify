@@ -1,0 +1,30 @@
+# tweets with author
+{
+    Tweets {
+      id body
+      Author {
+        full_name city weather
+      }
+    }
+}
+
+# querying subscribers
+{
+  Tweet(id:1) {
+    id body date
+    Subscribers {
+      full_name city weather
+    }
+  }
+}
+
+
+#field parameters
+{
+  Tweet(id:1) {
+    id body date
+    Subscribers {
+      full_name(initials:false) city weather
+    }
+  }
+}

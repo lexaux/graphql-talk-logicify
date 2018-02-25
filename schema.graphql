@@ -14,7 +14,7 @@ type User {
     username: String
     first_name: String
     last_name: String
-    full_name: String
+    full_name(initials:Boolean = false): String
     city: String
     weather: String
     name: String @deprecated

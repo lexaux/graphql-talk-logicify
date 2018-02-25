@@ -36,7 +36,7 @@ const resolvers = {
     },
 
     User: {
-        full_name: (user) => `${user.first_name} ${user.last_name}`,
+        full_name: (user, {initials}) => `${initials?user.first_name.charAt(0)+".":user.first_name} ${user.last_name}`,
         avatar_url: (user) => `https://www.gravatar.com/avatar/${user.username}.jpg?d=monsterid`,
         weather: (user, params, context) => weather.getWeatherForCity(user.city)
     },
