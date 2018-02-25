@@ -6,7 +6,6 @@ const getWeatherForCity = (city) => {
 
     return fetch(YAHOO_API + query)
         .then(res => res.json())
-        // .then(json => console.log(JSON.stringify(json, null, 4)));
         .then(weatherJson => `${weatherJson.query.results.channel.item.condition.text}, ${weatherJson.query.results.channel.item.condition.temp}˚C`)
 };
 
