@@ -8,7 +8,6 @@ type Tweet {
     Author: User
     Subscribers(countFirst: Int): [User]
 }
-
 type User {
     id: ID!
     username: String
@@ -20,18 +19,13 @@ type User {
     name: String @deprecated
     avatar_url: Url
 }
-
-
-scalar Url
-scalar Date
-
 type Query {
     Tweet(id: ID!): Tweet
     Tweets(limit: Int, sortField: String, sortOrder: String): [Tweet]
     User: User
 }
-
 type Mutation {
     createTweet(body: String): Tweet
-    markTweetRead(tweetId: ID!, userId: ID!): Boolean
-}
+    markTweetRead(tweetId: ID!, userId: ID!): Boolean}
+scalar Url
+scalar Date
