@@ -34,6 +34,6 @@ You can use tags to navigate down the histor, the sequence is as follows:
 
 The [GraphQL Official Documentation](http://graphql.org/learn/) and excellent [tutorial by Marmelab](https://marmelab.com/blog/2017/09/06/dive-into-graphql-part-iii-building-a-graphql-server-with-nodejs.html#composing-schemas) are two sources I have mostly used for the talk.
 
-Thanks, and feel free to drop me a line if you have any questions/ideas.
+Thanks, and feel free to drop me a line if you have any questions/ideas. Also visit our website https://www.logicify.com to learn more about the company.
 
 Alex.
